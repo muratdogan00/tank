@@ -60,6 +60,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     this->showMaximized();
 
+    qfi_EADI *graphicsEADI = new qfi_EADI;
+
+
 
 
 
@@ -70,10 +73,10 @@ MainWindow::MainWindow(QWidget *parent)
     //this->centralWidget()->setStyleSheet("background-image:url(\"bkg.jpg\"); background-position: center; ");
     setCentralWidget(view);
     scene->setSceneRect(0,0,1920,1080);
-    QPixmap bkgrnd("C:/Users/murat/OneDrive/Resimler/Screenshot 2024-08-27 100813.png");
-    bkgrnd = bkgrnd.scaled(this->size(), Qt::IgnoreAspectRatio);
+    //QPixmap bkgrnd("C:/Users/murat/OneDrive/Resimler/Screenshot 2024-08-27 100813.png");
+    //bkgrnd = bkgrnd.scaled(this->size(), Qt::IgnoreAspectRatio);
     QPalette palette;
-    palette.setBrush(QPalette::Window, bkgrnd);
+    //palette.setBrush(QPalette::Window, bkgrnd);
     this-> setPalette(palette);
     //scene-> setPalette(palette);
     label1 = scene->addRect(0,0,60,30);
@@ -81,8 +84,13 @@ MainWindow::MainWindow(QWidget *parent)
     //QBrush bgrn("C:/Users/murat/OneDrive/Resimler/devre.png");
     scene->setBackgroundBrush(QBrush(QImage("C:/Users/murat/OneDrive/Belgeler/arkaplan2")));
 
+    //scene->addWidget(gra)
+
 
     label1-> setPos(1800,0);
+    scene->addWidget(graphicsEADI);
+
+
 
 
 
@@ -258,7 +266,7 @@ qDebug() << " tuşa basıldı";
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 QApplication::quit();
-            } else if (e.type == SDL_CONTROLLERBUTTONDOWN) {
+            } else if (e.type == SDL_CONTROLLERBUTTONDOWN){
                 if (e.cbutton.button == SDL_CONTROLLER_BUTTON_A) {
                     currentAngle +=5;
                     std::cout << "Press A" << std::endl;
@@ -266,7 +274,18 @@ qDebug() << " tuşa basıldı";
 
 
                 }
+              else  if (e.cbutton.button == SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) {
+                   // currentAngle +=5;
+                    fireBullet();
+
+                    std::cout << "Press A" << std::endl;
+
+
+
+                }
+
             } else if (e.type == SDL_CONTROLLERAXISMOTION) {
+
                 if (e.caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX) {
                     if (e.caxis.value < 0) {
                         leftStickX=e.caxis.value;
@@ -289,6 +308,15 @@ qDebug() << " tuşa basıldı";
 
                         std::cout << "Down" << std::endl;
                     }
+
+                }
+                else if (e.cbutton.button == SDL_CONTROLLER_AXIS_TRIGGERRIGHT) {
+                    //currentAngle +=5;
+                    fireBullet();
+                    std::cout << "Press rb" << std::endl;
+
+
+
                 }
             }
         }
@@ -315,8 +343,8 @@ qDebug() << " tuşa basıldı";
         }
         if (abs(leftStickY) > 500) {
            // position.setY(position.y() + leftStickY / 3200);
-            position.setX(position.x() - qSin(qDegreesToRadians(currentAngle))*leftStickY / 3200);
-            position.setY(position.y() +qCos(qDegreesToRadians(currentAngle))* leftStickY / 3200);
+            position.setX(position.x() - qSin(qDegreesToRadians(currentAngle))*(leftStickY / 3200));
+            position.setY(position.y() +qCos(qDegreesToRadians(currentAngle))* (leftStickY / 3200));
         }
 
         // Klavye hareketi
