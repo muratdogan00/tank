@@ -13,6 +13,20 @@
 #include <QList>
 #include <QGraphicsEllipseItem>
 #include <QtMath>
+#include <qfi/qfi_ASI.h>
+//#include <QWebEngineView>
+#include <QGeoServiceProvider>
+#include <QGeoCoordinate>
+#include <QQuickView>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QQuickItem>
+#include <QQuickWidget>
+
+
+
+
+
 
 
 QT_BEGIN_NAMESPACE
@@ -52,6 +66,8 @@ private slots:
     void fireBullet();
     void updateBullets();
 
+    //void on_graphicsEADI_rubberBandChanged(const QRect &rect, const QPointF &from, const QPointF &to);
+
 private:
     Ui::MainWindow *ui;
     SDL_GameController *gamepad;
@@ -67,17 +83,22 @@ private:
     //QGraphicsPixmapItem *target6;
     QGraphicsPixmapItem *tank1 =nullptr;
     QGraphicsRectItem *label1;
-     QGraphicsRectItem *label2;
+    QGraphicsRectItem *label2;
+    qfi_ASI  *graphicsASI;
+    QQmlApplicationEngine *engine;
+    QQuickItem *mapItem;
+    QQuickWidget *mapWidget;
 
     //QLabel *target1;
 
-    bool isKeyboardControlActive;
+   // bool isKeyboardControlActive;
     int keyboardMoveX;
     int keyboardMoveY;
     float currentAngle;
     //float targetAngle;
     bool text1;
     int b;
+    float c;
 
     //int a;
 

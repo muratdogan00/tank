@@ -1,9 +1,12 @@
+
+
 #include "mainwindow.h"
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <iostream>
 
 #undef main
+
 
 
 

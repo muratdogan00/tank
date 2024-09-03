@@ -1,10 +1,12 @@
-QT       += core gui
+QT       += core gui svgwidgets location positioning quick quickwidgets
+
 
 
 INCLUDEPATH += C:\Users\murat\OneDrive\Belgeler\deneme2\include\SDL2
 LIBS += -LC:\Users\murat\OneDrive\Belgeler\deneme2\lib -lSDL2
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
 
 CONFIG += c++17
 
@@ -21,6 +23,7 @@ HEADERS += \
 
 FORMS += \
     mainwindow.ui
+    include(qfi/qfi.pri)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -29,3 +32,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resource.qrc
+
+DISTFILES += \
+    map.qml
