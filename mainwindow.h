@@ -1,20 +1,23 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QTimer>
+#include "bullet.h"
+
 #include <SDL.h>
-//#include <iostream>
 #include <qlabel.h>
+#include <qfi/qfi_ASI.h>
+
+#include <iostream>
+#include <QMainWindow>
+#include <QKeyEvent>
+#include <QImage>
+#include <QTimer>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
 #include <QRandomGenerator>
 #include <QList>
-#include <QGraphicsEllipseItem>
 #include <QtMath>
-#include <qfi/qfi_ASI.h>
-//#include <QWebEngineView>
 #include <QGeoServiceProvider>
 #include <QGeoCoordinate>
 #include <QQuickView>
@@ -23,88 +26,87 @@
 #include <QQuickItem>
 #include <QQuickWidget>
 
-
-
-
-
+// #include <QtLocation>
+// #include <QGeoPositionInfoSource>
+// #include <QGraphicsProxyWidget>
+// #include <stdio.h>
+// #include <QBrush>
+// #include <QVBoxLayout>
+//#include <QGeoMapType>
+// #include <QVBoxLayout>
 
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 QT_END_NAMESPACE
-class Bullet : public QGraphicsEllipseItem {
-public:
-    Bullet(qreal x, qreal y, qreal angle);
-    void advance();
-    bool shouldDelete = false;
-
-private:
-    qreal angle_rad;
-    qreal speed;
-};
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    public:
+        MainWindow(QWidget* parent = nullptr);
+        ~MainWindow();
 
-private slots:
-    //void checkSDLEvents();
-    void moveObject();
-    //void handleKeyboardEvents(SDL_Event &e);
-    void update();
-    void rotateObject();
-    void keyReleaseEvent(QKeyEvent *event);
-    void keyPressEvent(QKeyEvent *event);
-    void handleGamepadInput();
+    private slots:
+        void move_object();
+        void update();
+        void rotate_object();
+        void key_release_event(QKeyEvent *event);
+        void key_press_event(QKeyEvent *event);
+        void handle_gamepad_input();
+        void fire_bullet();
+        void update_bullets();
 
-    void fireBullet();
-    void updateBullets();
+    private:
+        Ui::MainWindow* ui;
 
-    //void on_graphicsEADI_rubberBandChanged(const QRect &rect, const QPointF &from, const QPointF &to);
+        SDL_GameController* gamepad;
 
-private:
-    Ui::MainWindow *ui;
-    SDL_GameController *gamepad;
-    QTimer *sdlTimer;
-   // QLabel *tank;
+        QPalette palette;
 
-    QGraphicsScene *scene;
-    QGraphicsView *view;
+        QTimer* gamepad_timer;
+        QTimer* bullet_timer;
+        QTimer* sdl_timer;
 
-    QList<QGraphicsPixmapItem*> targets;
-    //QGraphicsPixmapItem *target4;
-    //QGraphicsPixmapItem *target5;
-    //QGraphicsPixmapItem *target6;
-    QGraphicsPixmapItem *tank1 =nullptr;
-    QGraphicsRectItem *label1;
-    QGraphicsRectItem *label2;
-    qfi_ASI  *graphicsASI;
-    QQmlApplicationEngine *engine;
-    QQuickItem *mapItem;
-    QQuickWidget *mapWidget;
+        QPixmap background_pixmap;
+        QPixmap tank_pixmap;
+        QPixmap target_pixmap;
 
-    //QLabel *target1;
+        QGraphicsScene* scene;
 
-   // bool isKeyboardControlActive;
-    int keyboardMoveX;
-    int keyboardMoveY;
-    float currentAngle;
-    //float targetAngle;
-    bool text1;
-    int b;
-    float c;
+        QGraphicsView* view;
 
-    //int a;
+        QList<QGraphicsPixmapItem*> targets;
+        QList<Bullet*> bullets;
 
-    int leftStickX;
-    int leftStickY;
-    QList<Bullet*> bullets; // Mermileri saklayan liste
-    QTimer *bulletTimer;
+        QGraphicsPixmapItem* tank_pixmap_item;
+        QGraphicsPixmapItem* target_pixmap_item;
+
+        QGraphicsRectItem* label2;
+
+        qfi_ASI* graphics_ASI;
+
+        QQmlApplicationEngine* engine;
+
+        QQuickItem* map_quick_item;
+
+        QQuickWidget* map_quick_widget;
+
+        bool is_keyboard_control_active;
+        bool hit_control;
+
+        int amount_of_ammo;
+        int keyboard_move_X;
+        int keyboard_move_Y;
+        int left_stick_X;
+        int left_stick_Y;
+
+        float current_angle;
+        float tank_speed;
 };
+
 #endif // MAINWINDOW_H

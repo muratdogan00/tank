@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/images">
-        <file>image/2024-06-10 (1).png</file>
+        <file>target.png</file>
+        <file>tank.png</file>
+        <file>map.png</file>
+        <file>target_tank.png</file>
     </qresource>
 </RCC>
