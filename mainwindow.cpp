@@ -29,7 +29,7 @@ Bullet::Bullet(qreal x, qreal y, qreal angle) : QGraphicsEllipseItem(0, 0, 10, 1
     setPos(x, y);
 
     angle_rad = qDegreesToRadians(angle);
-    speed = 5; // Mermi hızı
+    speed = 25; // Mermi hızı
     setBrush(Qt::red);
     //bool shouldDelete = false;
 }
@@ -37,7 +37,7 @@ Bullet::Bullet(qreal x, qreal y, qreal angle) : QGraphicsEllipseItem(0, 0, 10, 1
 void Bullet::advance() {
     setPos(x() + qSin(angle_rad) * speed, y() - qCos(angle_rad) * speed);
 
-    if (pos().x() > 1920 || pos().x() < 0 || pos().y() > 1080 || pos().y() < 0) {
+    if (pos().x() > 5000 || pos().x() < 0 || pos().y() > 5000 || pos().y() < 0) {
 
         qDebug() << "bullet marked for deletion";
         shouldDelete = true;
@@ -145,7 +145,10 @@ MainWindow::MainWindow(QWidget *parent)
     //scene.addItem(mapItem);
 
 
-    scene->addWidget(graphicsASI);
+    //scene->addWidget(graphicsASI);
+
+
+    graphicsASI->setParent(view);
 
     graphicsASI->setFixedHeight(200);
     graphicsASI->setFixedWidth(200);
@@ -153,9 +156,15 @@ MainWindow::MainWindow(QWidget *parent)
     graphicsASI->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsASI->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    graphicsASI->setGeometry(0,815,200,200);
+    //graphicsASI->setGeometry(0,815,200,200);
+
+    graphicsASI->setGeometry(10, view->height() - graphicsASI->height() - 80, graphicsASI->width(), graphicsASI->height());
 
     graphicsASI->setStyleSheet("background-color: rgba(255, 255, 255,0);");
+
+
+
+
 
     //raphicsASI->setAirspeed(100);
 
@@ -172,9 +181,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    QPixmap tankPixmap("C:/Users/murat/OneDrive/Belgeler/Başlıksız2.png");
+    QPixmap tankPixmap("C:/Users/murat/OneDrive/Belgeler/gamepaddeneme/tank4.png");
     QPixmap targetpixmap("C:/Users/murat/OneDrive/Belgeler/best-png-target-11.png");
-    QPixmap scaledTankPixmap = tankPixmap.scaled(tankPixmap.width() / 20, tankPixmap.height() / 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QPixmap scaledTankPixmap = tankPixmap.scaled(tankPixmap.width() / 15, tankPixmap.height() / 15, Qt::KeepAspectRatio, Qt::SmoothTransformation);
      QPixmap scaledtargetPixmap = targetpixmap.scaled(targetpixmap.width() / 15, targetpixmap.height() / 15, Qt::KeepAspectRatio, Qt::SmoothTransformation);
      tank1 = new QGraphicsPixmapItem(scaledTankPixmap);
 
@@ -186,10 +195,12 @@ MainWindow::MainWindow(QWidget *parent)
     label2->setPos(-100,10);
 
 
+
+
     for (int i = 0; i < 3; ++i) {
         QGraphicsPixmapItem *target = scene->addPixmap(scaledtargetPixmap);
-        target->setPos(QRandomGenerator::global()->bounded(width()+350),
-                       QRandomGenerator::global()->bounded(height()+350));
+        target->setPos(QRandomGenerator::global()->bounded(width()+1000),
+                       QRandomGenerator::global()->bounded(height()+1500));
         //target->setBrush(Qt::blue);
         targets.append(target);
     }
@@ -446,6 +457,9 @@ qDebug() << " tuşa basıldı";
         else if(keyboardMoveY==1){
             graphicsASI->setAirspeed(+(qCos(qDegreesToRadians(currentAngle))* keyboardMoveY*40)-(qSin(qDegreesToRadians(currentAngle))*keyboardMoveY*40));
         }
+        else if (keyboardMoveY == 0 && leftStickY == 0){
+            graphicsASI->setAirspeed(0);
+        }
 
         //graphicsASI->setAirspeed(-(qCos(qDegreesToRadians(currentAngle))* keyboardMoveY*40)+(qSin(qDegreesToRadians(currentAngle))*keyboardMoveY*40));
         graphicsASI->redraw();
@@ -457,8 +471,10 @@ qDebug() << " tuşa basıldı";
 
         tank1->setPos(position);
         view->centerOn(position);
-        QPointF position2 = view->pos();
-        graphicsASI->centerOn(position2);
+        //QPointF position2 = view->pos();
+        //graphicsASI->centerOn(position2);
+        //graphicsASI->(10, view->height() - graphicsASI->height() - 10,200,200);
+       // graphicsASI->move(10, view->height() - graphicsASI->height() - 10);
         qDebug() << "Tank position:" << position;
     }
     void MainWindow::rotateObject()
@@ -467,8 +483,8 @@ qDebug() << " tuşa basıldı";
 
 
         QPointF position = tank1->pos();
-        QPixmap originalPixmap("C:/Users/murat/OneDrive/Belgeler/Başlıksız2.png");
-        QPixmap scaledTankPixmap = originalPixmap.scaled(originalPixmap.width() / 20, originalPixmap.height() / 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        QPixmap originalPixmap("C:/Users/murat/OneDrive/Belgeler/gamepaddeneme/tank4.png");
+        QPixmap scaledTankPixmap = originalPixmap.scaled(originalPixmap.width() / 15, originalPixmap.height() / 15, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         //QTransform transform;
 
 
@@ -558,6 +574,8 @@ qDebug() << " tuşa basıldı";
         static QGraphicsTextItem *statusText = nullptr;
         static QGraphicsTextItem *statusText2 = nullptr;
         static QGraphicsTextItem *statusText3 = nullptr;
+
+
 
 
         for (auto it = bullets.begin(); it != bullets.end();) {
