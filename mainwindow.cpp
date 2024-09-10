@@ -4,13 +4,19 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
                                         , ui(new Ui::MainWindow)
                                         , gamepad(nullptr)
-                                        , background_pixmap(":\\images\\map.png")
+                                        , map_pixmap(":\\images\\map.png")
+                                        , map2_pixmap(":\\images\\map2.png")
+                                        , map3_pixmap(":\\images\\map3.png")
+                                        , map4_pixmap(":\\images\\map4.png")
                                         , tank_pixmap(":images\\tank.png")
-                                        , target_pixmap(":\\images\\target_tank.png")
+                                        // , tank2_pixmap(":images\\tank2.png")
+                                        // , tank3_pixmap(":images\\tank3.png")
+                                        , target_tank_pixmap(":\\images\\target_tank.png")
+                                        , bullet_pixmap(":\\images\\bullet.png")
                                         , tank_pixmap_item(nullptr)
                                         , is_keyboard_control_active(false)
                                         , hit_control(false)
-                                        , amount_of_ammo(10)
+                                        , amount_of_bullet(15)
                                         , keyboard_move_X(0)
                                         , keyboard_move_Y(0)
                                         , left_stick_X(0)
@@ -22,7 +28,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     // background_pixmap = background_pixmap.scaled(this->size(), Qt::IgnoreAspectRatio);
     tank_pixmap = tank_pixmap.scaled(tank_pixmap.width() / 25, tank_pixmap.height() / 25, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    target_pixmap = target_pixmap.scaled(target_pixmap.width() / 10, target_pixmap.height() / 10, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    target_tank_pixmap = target_tank_pixmap.scaled(target_tank_pixmap.width() / 10, target_tank_pixmap.height() / 10, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    bullet_pixmap = bullet_pixmap.scaled(106, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
     // palette.setBrush(QPalette::Window, background_pixmap);
 
@@ -33,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     scene = new QGraphicsScene(this);
     scene->setSceneRect(0, 0, 5000, 5000);
-    scene->setBackgroundBrush(QBrush(background_pixmap));
+    scene->setBackgroundBrush(QBrush(map_pixmap));
 
     tank_pixmap_item = new QGraphicsPixmapItem(tank_pixmap);
     tank_pixmap_item->setPos(scene->width() / 2 - 50, scene->height() / 2 - 25);
@@ -60,12 +67,48 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     for (size_t i = 0; i < 3; ++i)
     {
-        target_pixmap_item = new QGraphicsPixmapItem(target_pixmap);
-        target_pixmap_item->setPos(QRandomGenerator::global()->bounded(width() + 1500), QRandomGenerator::global()->bounded(height() + 1500));
+        target_pixmap_item = new QGraphicsPixmapItem(target_tank_pixmap);
+        target_pixmap_item->setPos(QRandomGenerator::global()->bounded(width() + 3000), QRandomGenerator::global()->bounded(height()) + 3000);
 
         scene->addItem(target_pixmap_item);
 
         targets.append(target_pixmap_item);
+    }
+
+    for (size_t i = 0; i < 15; ++i)
+    {
+        bullet_widget = new QWidget;
+
+        bullet_label = new QLabel(bullet_widget);
+        bullet_label->setPixmap(bullet_pixmap);
+        bullet_label->setFixedSize(bullet_pixmap.size());
+
+        bullet_layout = new QVBoxLayout(bullet_label);
+        bullet_layout->addWidget(bullet_label);
+
+        bullet_widget->setLayout(bullet_layout);
+        bullet_widget->setParent(view);
+        bullet_widget->setGeometry(1800, view->height() - bullet_widget->height() + i * 25, bullet_widget->width(), bullet_widget->height());
+
+        Bullets.append(bullet_widget);
+    }
+
+    for (size_t i = 0; i < 3; ++i)
+    {
+        target_tank_widget = new QWidget;
+
+        target_tank_label = new QLabel(target_tank_widget);
+        target_tank_label->setPixmap(target_tank_pixmap);
+        target_tank_label->setFixedSize(target_tank_pixmap.size());
+
+        target_tank_layout = new QVBoxLayout(target_tank_label);
+        target_tank_layout->addWidget(target_tank_label);
+
+        target_tank_widget->setLayout(target_tank_layout);
+        target_tank_widget->setParent(view);
+        target_tank_widget->setGeometry(1600 + (i * 40), view->height() - target_tank_widget->height() + 300, target_tank_widget->width(), target_tank_widget->height());
+
+        Targets.append(target_tank_widget);
     }
 
     gamepad_timer = new QTimer(this);
@@ -101,91 +144,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     }
 
     std::cout << "Gamepad is connected" << std::endl;
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // this->showMaximized();
-
-    // graphics_ASI = new qfi_ASI;
-
-    // scene = new QGraphicsScene(this);
-    // view = new QGraphicsView(scene, this);
-    // tank_pixmap_item = new QGraphicsPixmapItem();
-    // view->setFixedSize(1920,1080);
-
-    // setCentralWidget(view);
-    // scene->setSceneRect(0,0,5000,5000);
-
-    // scene->setBackgroundBrush(QBrush(QImage(":/images/background.png")));
-
-    // graphics_ASI->setParent(view);
-
-    // graphics_ASI->setFixedHeight(200);
-    // graphics_ASI->setFixedWidth(200);
-
-    // graphics_ASI->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    // graphics_ASI->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    // graphics_ASI->setGeometry(10, view->height() - graphics_ASI->height() - 80, graphics_ASI->width(), graphics_ASI->height());
-
-    // graphics_ASI->setStyleSheet("background-color: rgba(255, 255, 255,0);");
-
-    // tank_pixmap_item = new QGraphicsPixmapItem(tank_pixmap);
-
-    // scene->addItem(tank_pixmap_item);
-
-    // tank_pixmap_item->setPos(800,700);
-
-    // label2 = scene->addRect(0,0,100,20);
-    // label2->setPos(-100,10);
-
-    // for (size_t i = 0; i < 3; ++i)
-    // {
-    //     target_pixmap_item = new QGraphicsPixmapItem(target_pixmap);
-    //     target_pixmap_item->setPos(QRandomGenerator::global()->bounded(width() + 1500), QRandomGenerator::global()->bounded(height() + 1500));
-
-    //     scene->addItem(target_pixmap_item);
-
-    //     targets.append(target_pixmap_item);
-    // }
-
-    // this->setFocusPolicy(Qt::StrongFocus);
-    // this->setFocus();
-
-    // gamepad_timer = new QTimer(this);
-    // connect(gamepad_timer, &QTimer::timeout, this, &MainWindow::handle_gamepad_input);
-    // gamepad_timer->start(16);
-
-    // bullet_timer = new QTimer(this);
-    // connect(bullet_timer, &QTimer::timeout, this, &MainWindow::update);
-    // bullet_timer->start(1000);
-
-    // sdl_timer = new QTimer(this);
-    // connect(sdl_timer, &QTimer::timeout, this, &MainWindow::update);
-    // sdl_timer->start(16);
-
-    // this->setFocusPolicy(Qt::StrongFocus);
-
-    // if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK|SDL_INIT_GAMECONTROLLER) !=0) std::cerr<< "sdl doesnot exist:"<< SDL_GetError() << std::endl;
-    // else
-    // {
-    //     for (int i = 0; i < SDL_NumJoysticks(); ++i)
-    //     {
-    //         if (SDL_IsGameController(i))
-    //         {
-    //             gamepad = SDL_GameControllerOpen(i);
-
-    //             if (gamepad)
-    //             {
-    //                 std::cout << "Gamepad connected: " << SDL_GameControllerName(gamepad) << std::endl;
-
-    //                 return;
-    //             }
-    //             else std::cerr << "Could not open gamepad " << i << ": " << SDL_GetError() << std::endl;
-    //         }
-    //     }
-    // }
-    // std::cout<<"joystick connected"<< std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -197,34 +155,73 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::key_press_event(QKeyEvent *event)
+void MainWindow::change_map(const QPixmap& new_map)
+{
+    scene->setBackgroundBrush(QBrush(new_map));
+}
+
+void MainWindow::change_tank(const QPixmap& new_tank)
+{
+    tank_pixmap_item->setPixmap(new_tank);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* event)
 {
     switch(event->key())
     {
         case Qt::Key_Up:
-            keyboard_move_Y = +1;
+            keyboard_move_Y = +3;
             qDebug() << "Up is pressed";
             break;
         case Qt::Key_Down:
-            keyboard_move_Y = -1;
+            keyboard_move_Y = -3;
             qDebug() << "Down is pressed";
             break;
         case Qt::Key_Left:
-            current_angle -= 1;
+            current_angle -= 5;
             qDebug() << "Left is pressed";
             break;
         case Qt::Key_Right:
-            current_angle += 1;
+            current_angle += 5;
             qDebug() << "Right is pressed";
             break;
         case Qt::Key_Space:
             fire_bullet();
+            if (Bullets.isEmpty() == false) Bullets.takeFirst()->hide();
             qDebug() << "Space is pressed";
             break;
+        case Qt::Key_1:
+            change_map(map_pixmap);
+            qDebug() << "Background changed to map_pixmap";
+            break;
+        case Qt::Key_2:
+            change_map(map2_pixmap);
+            qDebug() << "Background changed to map2_pixmap";
+            break;
+        case Qt::Key_3:
+            change_map(map3_pixmap);
+            qDebug() << "Background changed to map3_pixmap";
+            break;
+        case Qt::Key_4:
+            change_map(map4_pixmap);
+            qDebug() << "Background changed to map4_pixmap";
+            break;
+        case Qt::Key_7:
+            change_tank(tank_pixmap);
+            qDebug() << "Background changed to map_pixmap";
+            break;
+        // case Qt::Key_8:
+        //     change_tank(tank2_pixmap);
+        //     qDebug() << "Background changed to map2_pixmap";
+        //     break;
+        // case Qt::Key_9:
+        //     change_tank(tank3_pixmap);
+        //     qDebug() << "Background changed to map3_pixmap";
+        //     break;
     }
 }
 
-void MainWindow::key_release_event(QKeyEvent* event)
+void MainWindow::keyReleaseEvent(QKeyEvent* event)
 {
     switch(event->key())
     {
@@ -377,7 +374,7 @@ void MainWindow::fire_bullet()
 {
     static QGraphicsTextItem* ammo_status = nullptr;
 
-    if (amount_of_ammo > 0)
+    if (amount_of_bullet > 0)
     {
         QPointF tank_position = tank_pixmap_item->pos();
 
@@ -389,17 +386,17 @@ void MainWindow::fire_bullet()
 
         bullets.append(bullet);
 
-        amount_of_ammo--;
+        amount_of_bullet--;
 
         if (ammo_status == nullptr)
         {
-            ammo_status = scene->addText("Remaining bullet: " + QString::number(amount_of_ammo));
+            ammo_status = scene->addText("Remaining bullet: " + QString::number(amount_of_bullet));
             ammo_status->setDefaultTextColor(Qt::black);
             ammo_status->setPos(500, 0);
         }
         else
         {
-            ammo_status->setPlainText("Remaining bullet: " + QString::number(amount_of_ammo));
+            ammo_status->setPlainText("Remaining bullet: " + QString::number(amount_of_bullet));
             ammo_status->setDefaultTextColor(Qt::black);
         }
     }
@@ -449,6 +446,8 @@ void MainWindow::update_bullets()
                 targets.removeOne(target);
 
                 delete target;
+
+                Targets.takeFirst()->hide();
 
                 collision = true;
 
