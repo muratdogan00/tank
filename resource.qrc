@@ -4,5 +4,9 @@
         <file>tank.png</file>
         <file>map.png</file>
         <file>target_tank.png</file>
+        <file>bullet.png</file>
+        <file>map3.png</file>
+        <file>map2.png</file>
+        <file>map4.png</file>
     </qresource>
 </RCC>
