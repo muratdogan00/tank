@@ -3,25 +3,22 @@
 
 #include "bullet.h"
 
-#include <SDL.h>
-#include <qlabel.h>
-#include <qfi/qfi_ASI.h>
+#include "tank.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-
-#include <iostream>
 #include <QMainWindow>
-#include <QKeyEvent>
-#include <QImage>
 #include <QTimer>
+#include <SDL.h>
+//#include <iostream>
+#include <qlabel.h>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
 #include <QRandomGenerator>
 #include <QList>
+#include <QGraphicsEllipseItem>
 #include <QtMath>
+#include <qfi/qfi_ASI.h>
+//#include <QWebEngineView>
 #include <QGeoServiceProvider>
 #include <QGeoCoordinate>
 #include <QQuickView>
@@ -29,102 +26,121 @@
 #include <QQmlContext>
 #include <QQuickItem>
 #include <QQuickWidget>
+#include <QPointF>
+#include <QLineEdit>
+#include <QVBoxLayout>
 
-// #include <QtLocation>
-// #include <QGeoPositionInfoSource>
-// #include <QGraphicsProxyWidget>
-// #include <stdio.h>
-// #include <QBrush>
-// #include <QVBoxLayout>
-//#include <QGeoMapType>
-// #include <QVBoxLayout>
+
+
+
+
+
 
 
 QT_BEGIN_NAMESPACE
-namespace Ui
-{
+namespace Ui {
 class MainWindow;
 }
 QT_END_NAMESPACE
+
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    public:
-        MainWindow(QWidget* parent = nullptr);
-        ~MainWindow();
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 
-    private slots:
-        void change_map(const QPixmap& newPixmap);
-        void change_tank(const QPixmap& new_tank);
-        void move_object();
-        void update();
-        void rotate_object();
-        void keyReleaseEvent(QKeyEvent *event);
-        void keyPressEvent(QKeyEvent *event);
-        void handle_gamepad_input();
-        void fire_bullet();
-        void update_bullets();
+private slots:
+    //void checkSDLEvents();
+    void moveObject();
+    //void handleKeyboardEvents(SDL_Event &e);
+    void update();
+    void rotateObject();
+    void keyReleaseEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+    void handleGamepadInput();
 
-    private:
-        Ui::MainWindow* ui;
+    void fireBullet();
+    void updateBullets();
+    QPointF findNearestTarget();
+    void updateTankAI();
+    void startTankAI();
+    void stopTankAI();
+    //void moveTowardsTarget(QPointF targetPos);
+    void initializeTank();
+    // void entercoordinate();
+    //void gocoordinate();
+    void setupCoordWidget();
+    void showCoordWidget();
+    void hideCoordWidget();
+    void goToCoordinates(int x, int y);
 
-        SDL_GameController* gamepad;
+    //void on_graphicsEADI_rubberBandChanged(const QRect &rect, const QPointF &from, const QPointF &to);
 
-        QPalette palette;
+private:
+    Ui::MainWindow *ui;
+    SDL_GameController *gamepad;
+    QTimer *sdlTimer;
+    // QLabel *tank;
 
-        QTimer* gamepad_timer;
-        QTimer* bullet_timer;
-        QTimer* sdl_timer;
+    QGraphicsScene *scene;
+    QGraphicsView *view;
 
-        QPixmap map_pixmap;
-        QPixmap map2_pixmap;
-        QPixmap map3_pixmap;
-        QPixmap map4_pixmap;
-        QPixmap tank_pixmap;
-        QPixmap tank2_pixmap;
-        QPixmap tank3_pixmap;
-        QPixmap target_tank_pixmap;
-        QPixmap bullet_pixmap;
+    QList<QGraphicsPixmapItem*> targets;
+    //QGraphicsPixmapItem *target4;
+    //QGraphicsPixmapItem *target5;
+    //QGraphicsPixmapItem *target6;
+    // QGraphicsPixmapItem *tank1 =nullptr;
+    QGraphicsRectItem *label1;
+    QGraphicsRectItem *label2;
+    qfi_ASI  *graphicsASI;
+    // QQmlApplicationEngine *engine;
+    //  QQuickItem *mapItem;
+    QQuickWidget *mapWidget;
+    QWidget *coordWidget;
+    //QLineEdit *xCoordInput;
+    //QLineEdit *yCoordInput;
 
-        QGraphicsScene* scene;
+    //QLabel *target1;
 
-        QGraphicsView* view;
+    // bool isKeyboardControlActive;
+    int keyboardMoveX;
+    int keyboardMoveY;
+    float currentAngle;
+    //float targetAngle;
+    bool text1;
+    int b;
+    float c;
+    float d;
+    bool shoot;
+    bool isAligned;
+    //QPointF defaultPosition;
+    bool deneme;
+    bool deneme2;
+    bool deneme3;
+    tank *tank2;
 
-        QList<QGraphicsPixmapItem*> targets;
-        QList<Bullet*> bullets;
-        QList<QWidget*> Bullets;
-        QList<QWidget*> Targets;
+    //int a;
 
-        QGraphicsPixmapItem* tank_pixmap_item;
-        QGraphicsPixmapItem* target_pixmap_item;
-        QGraphicsPixmapItem* bullet_pixmap_item;
+    int leftStickX;
+    int leftStickY;
+    QList<Bullet*> bullets;
+    QList<QWidget*> Bullets;
+    QList<QWidget*> Targets;
+    QTimer *bulletTimer;
+    QTimer *tankAITimer = nullptr;
+    QPointF tankFrontOffset;
+    QPointF coordinate;
+    QWidget* bullet_widget;
+    QWidget* target_tank_widget;
 
-        QGraphicsRectItem* label2;
+    QLabel* bullet_label;
+    QLabel* target_tank_label;
 
-        qfi_ASI* graphics_ASI;
+    QVBoxLayout *bullet_layout;
+    QVBoxLayout *target_tank_layout;
 
-        QWidget* bullet_widget;
-        QWidget* target_tank_widget;
-
-        QLabel* bullet_label;
-        QLabel* target_tank_label;
-
-        QVBoxLayout* bullet_layout;
-        QVBoxLayout* target_tank_layout;
-
-        bool is_keyboard_control_active;
-        bool hit_control;
-
-        int amount_of_bullet;
-        int keyboard_move_X;
-        int keyboard_move_Y;
-        int left_stick_X;
-        int left_stick_Y;
-
-        float current_angle;
-        float tank_speed;
 };
-
 #endif // MAINWINDOW_H
